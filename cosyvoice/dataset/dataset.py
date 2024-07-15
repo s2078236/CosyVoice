@@ -95,7 +95,7 @@ class DistributedSampler:
             if self.shuffle:
                 random.Random(self.epoch).shuffle(data)
             if len(data) < self.world_size:
-                data = data * math.ceil(self.world_size / len(data))
+                data = data * math.ceil(self.world_size / len(data)) #word_size 2
                 data = data[:self.world_size]
             data = data[self.rank::self.world_size]
         if len(data) < self.num_workers:

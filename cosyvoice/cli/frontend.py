@@ -24,7 +24,7 @@ import inflect
 try:
     import ttsfrd
     use_ttsfrd = True
-except ImportError:
+except ImportError  :
     print("failed to import ttsfrd, use WeTextProcessing instead")
     from tn.chinese.normalizer import Normalizer as ZhNormalizer
     from tn.english.normalizer import Normalizer as EnNormalizer
@@ -143,8 +143,8 @@ class CosyVoiceFrontEnd:
                        'prompt_text': prompt_text_token, 'prompt_text_len': prompt_text_token_len,
                        'llm_prompt_speech_token': speech_token, 'llm_prompt_speech_token_len': speech_token_len,
                        'flow_prompt_speech_token': speech_token, 'flow_prompt_speech_token_len': speech_token_len,
-                       'prompt_speech_feat': speech_feat, 'prompt_speech_feat_len': speech_feat_len,
-                       'llm_embedding': embedding, 'flow_embedding': embedding}
+                       'prompt_speech_feat': speech_feat, 'prompt_speech_feat_len': speech_feat_len, #speech features. 即 mel spectrum
+                       'llm_embedding': embedding, 'flow_embedding': embedding}  #embedding 就是 speaker embedding
         return model_input
 
     def frontend_cross_lingual(self, tts_text, prompt_speech_16k):

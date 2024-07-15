@@ -31,7 +31,7 @@ class Executor:
         self.rank = int(os.environ.get('RANK', 0))
         self.device = torch.device('cuda:{}'.format(self.rank))
 
-    def train_one_epoc(self, model, optimizer, scheduler, train_data_loader, cv_data_loader, writer, info_dict, group_join):
+    def train_one_epoc(self, model, optimizer, scheduler, train_data_loader, cv_data_loader, writer, info_dict, group_join,if_save_model=None):
         ''' Train one epoch
         '''
 
@@ -77,7 +77,8 @@ class Executor:
                 if (batch_idx + 1) % info_dict["accum_grad"] == 0:
                     self.step += 1
         dist.barrier()
-        self.cv(model, cv_data_loader, writer, info_dict, on_batch_end=True)
+        if if_save_model:
+            self.cv(model, cv_data_loader, writer, info_dict, on_batch_end=True)
 
     @torch.inference_mode()
     def cv(self, model, cv_data_loader, writer, info_dict, on_batch_end=True):

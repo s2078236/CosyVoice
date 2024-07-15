@@ -122,15 +122,18 @@ def main():
 
     # Get executor
     executor = Executor()
+    save_per_epoch = 20
 
     # Start training loop
     for epoch in range(info_dict['max_epoch']):
+        if_save_model = epoch % save_per_epoch ==0 
         executor.epoch = epoch
         train_dataset.set_epoch(epoch)
         dist.barrier()
         group_join = dist.new_group(backend="gloo", timeout=datetime.timedelta(seconds=args.timeout))
-        executor.train_one_epoc(model, optimizer, scheduler, train_data_loader, cv_data_loader, writer, info_dict, group_join)
+        executor.train_one_epoc(model, optimizer, scheduler, train_data_loader, cv_data_loader, writer, info_dict, group_join,if_save_model=if_save_model)
         dist.destroy_process_group(group_join)
+
 
 if __name__ == '__main__':
     main()

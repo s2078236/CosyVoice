@@ -8,11 +8,11 @@ from tqdm import tqdm
 logger = logging.getLogger()
 
 def main():
-    wavs = list(glob.glob('{}/*/*/*wav'.format(args.src_dir)))
-
+    wavs = list(glob.glob('{}/zpl*.wav'.format(args.src_dir))) #list(glob.glob('{}/*/*/*wav'.format(args.src_dir)))
+    print(wavs)
     utt2wav, utt2text, utt2spk, spk2utt = {}, {}, {}, {}
     for wav in tqdm(wavs):
-        txt = wav.replace('.wav', '.normalized.txt')
+        txt = wav.replace('.wav', '.txt')
         if not os.path.exists(txt):
             logger.warning('{} do not exsist'.format(txt))
             continue

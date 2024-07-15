@@ -35,6 +35,7 @@ from deepspeed.runtime.zero.stage_1_and_2 import estimate_zero2_model_states_mem
 
 from cosyvoice.dataset.dataset import Dataset
 from cosyvoice.utils.scheduler import WarmupLR, NoamHoldAnnealing
+from cosyvoice.dataset.processor import padding
 
 
 def init_distributed(args):
@@ -54,18 +55,34 @@ def init_distributed(args):
 def init_dataset_and_dataloader(args, configs):
     train_dataset = Dataset(args.train_data, data_pipeline=configs['data_pipeline'], mode='train', shuffle=True, partition=True)
     cv_dataset = Dataset(args.cv_data, data_pipeline=configs['data_pipeline'], mode='train', shuffle=False, partition=False)
-
     # do not use persistent_workers=True, as whisper tokenizer opens tiktoken file each time when the for loop starts
     train_data_loader = DataLoader(train_dataset,
                                    batch_size=None,
                                    pin_memory=args.pin_memory,
                                    num_workers=args.num_workers,
+                                   persistent_workers=False,
                                    prefetch_factor=args.prefetch)
     cv_data_loader = DataLoader(cv_dataset,
                                 batch_size=None,
                                 pin_memory=args.pin_memory,
                                 num_workers=args.num_workers,
+                                persistent_workers=False,
                                 prefetch_factor=args.prefetch)
+
+    # train_data_loader = DataLoader(train_dataset,
+    #                                batch_size=2,
+    #                                pin_memory=args.pin_memory,
+    #                                num_workers=args.num_workers,
+    #                                persistent_workers=False,
+    #                                prefetch_factor=args.prefetch)
+    # cv_data_loader = DataLoader(cv_dataset,
+    #                             batch_size=2,
+    #                             pin_memory=args.pin_memory,
+    #                             num_workers=args.num_workers,
+    #                             persistent_workers=False,
+    #                             prefetch_factor=args.prefetch)
+    # train_data_loader=padding(train_data_loader)
+
     return train_dataset, cv_dataset, train_data_loader, cv_data_loader
 
 

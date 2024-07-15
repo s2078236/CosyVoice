@@ -20,6 +20,7 @@ import torch
 import torchaudio
 from torch.nn.utils.rnn import pad_sequence
 import torch.nn.functional as F
+import numpy as np
 
 torchaudio.set_audio_backend('soundfile')
 
@@ -167,7 +168,10 @@ def parse_embedding(data, normalize, mode='train'):
     """
     for sample in data:
         sample['utt_embedding'] = torch.tensor(sample['utt_embedding'], dtype=torch.float32)
-        sample['spk_embedding'] = torch.tensor(sample['spk_embedding'], dtype=torch.float32)
+        # print(f"utt {sample['utt_embedding'].shape}")
+        # print(f"------------------spk {sample['spk_embedding'][0].shape}")
+        # print(sample)
+        sample['spk_embedding'] = torch.tensor(sample['spk_embedding'][0], dtype=torch.float32) # zhen [0]
         if normalize:
             sample['utt_embedding'] = F.normalize(sample['utt_embedding'], dim=0)
             sample['spk_embedding'] = F.normalize(sample['spk_embedding'], dim=0)
@@ -306,7 +310,6 @@ def batch(data, batch_type='static', batch_size=16, max_frames_in_batch=12000, m
             return dynamic_batch(data, max_frames_in_batch)
         else:
             logging.fatal('Unsupported batch type {}'.format(batch_type))
-
 
 def padding(data, mode='train'):
     """ Padding the data into training data
