@@ -168,6 +168,7 @@ batch: !name:cosyvoice.dataset.processor.batch
     batch_size : 8
     max_frames_in_batch: 4000
 padding: !name:cosyvoice.dataset.processor.padding
+    use_spk_embedding: False # change to True during sft
 
 # dataset processor pipeline
 data_pipeline: [
